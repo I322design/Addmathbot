@@ -1,8 +1,12 @@
+import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 
-# TOKEN ANDA
+# Gantikan dengan Token anda
 TOKEN = '8772520971:AAEZE27a1pRqYpIb8pjtQ3UA_Rr1gOvrMuw'
+
+# Setup Logging (Untuk kesan error)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 # 1. MENU UTAMA
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -13,7 +17,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "Selamat datang ke Addmath Solver USIM!\n\nSila pilih kategori topik soalan anda:",
+        "Selamat datang ke Addmath Solver!\n\nSila pilih kategori topik soalan anda:",
         reply_markup=reply_markup
     )
 
@@ -25,39 +29,37 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     data = query.data
     
     if data == 'f4':
-        text = "Topik F4: 1.Fungsi, 2.Persamaan Kuadratik, 3.Sistem Persamaan, 4.Indeks/Log, 5.Janjang, 6.Hukum Linear, 7.Geometri Koordinat, 8.Vektor, 9.Penyelesaian Segitiga, 10.Nombor Indeks."
+        text = "Topik F4 terpilih. (Kos: RM5)"
         price = 5
     elif data == 'f5':
-        text = "Topik F5: 1.Sukatan Membulat, 2.Pembezaan, 3.Pengamiran, 4.Pilih Atur/Gabungan, 5.Taburan Kebarangkalian, 6.Fungsi Trigonometri, 7.Pengaturcaraan Linear, 8.Kinematik."
+        text = "Topik F5 terpilih. (Kos: RM5)"
         price = 5
-    else: # Unknown
-        text = "Anda memilih 'Tak Tahu Topik'. Surcharge RM1 dikenakan."
+    else:
+        text = "Anda memilih 'Tak Tahu Topik'. (Kos: RM6)"
         price = 6
 
     context.user_data['final_price'] = price
-    await query.edit_message_text(
-        text=f"{text}\n\n**KOS: RM{price}**\n\nSila HANTAR GAMBAR soalan anda sekarang."
-    )
+    await query.edit_message_text(text=f"{text}\n\nSila HANTAR GAMBAR soalan anda sekarang.")
 
-# 3. TERIMA GAMBAR & MINTA BAYARAN
+# 3. TERIMA GAMBAR
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     price = context.user_data.get('final_price', 5)
-    
     await update.message.reply_text(
-        f"Gambar soalan diterima! ✅\n\nSila buat bayaran RM{price} ke:\n"
-        "TNG eWallet: 01X-XXXXXXX (Nama Anda)\n\n"
-        "Selepas bayar, sila hantar SCREENSHOT RESIT di sini untuk pengesahan."
+        f"Gambar diterima! ✅\n\nSila buat bayaran RM{price} ke TNG: 01X-XXXXXXX.\n"
+        "Hantar resit selepas bayar."
     )
 
 def main():
-    app = Application.builder().token(TOKEN).build()
+    # Bina Application
+    application = Application.builder().token(TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button_handler))
-    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
+    # Tambah Handler
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CallbackQueryHandler(button_handler))
+    application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
-    print("Bot sedang aktif... Sedia menjana duit raya!")
-    app.run_polling()
+    print("Bot sedang aktif dan diperbaiki... Cuba tekan /start di Telegram!")
+    application.run_polling()
 
 if __name__ == '__main__':
     main()
