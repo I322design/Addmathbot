@@ -9,12 +9,12 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 # --- 1. MENU UTAMA ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("📘 TINGKATAN 4", callback_query_data='menu_f4')],
-        [InlineKeyboardButton("📕 TINGKATAN 5", callback_query_data='menu_f5')],
-        [InlineKeyboardButton("❓ TAK TAHU TOPIK (+RM1)", callback_query_data='unknown')]
+        [InlineKeyboardButton("📘 TINGKATAN 4", callback_data='menu_f4')],
+        [InlineKeyboardButton("📕 TINGKATAN 5", callback_data='menu_f5')],
+        [InlineKeyboardButton("❓ TAK TAHU TOPIK (+RM1)", callback_data='unknown')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Sila pilih kategori soalan anda:", reply_markup=reply_markup)
+    await update.message.reply_text("Selamat datang ke Addmath Solver!\nSila pilih kategori:", reply_markup=reply_markup)
 
 # --- 2. LOGIK BUTANG & BAB ---
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -24,30 +24,34 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data == 'menu_f4':
         keyboard = [
-            [InlineKeyboardButton("C1: Functions", callback_query_data='p'), InlineKeyboardButton("C2: Quad Functions", callback_query_data='p')],
-            [InlineKeyboardButton("C3: Systems Eq", callback_query_data='p'), InlineKeyboardButton("C4: Indices/Log", callback_query_data='p')],
-            [InlineKeyboardButton("C5: Progressions", callback_query_data='p'), InlineKeyboardButton("C6: Linear Law", callback_query_data='p')],
-            [InlineKeyboardButton("C7: Coordinate", callback_query_data='p'), InlineKeyboardButton("C8: Vectors", callback_query_data='p')],
-            [InlineKeyboardButton("C9: Differentiation", callback_query_data='p'), InlineKeyboardButton("C10: Prob Dist", callback_query_data='p')],
-            [InlineKeyboardButton("⬅️ Kembali", callback_query_data='back')]
+            [InlineKeyboardButton("C1: Functions", callback_data='p'), InlineKeyboardButton("C2: Quad Func", callback_data='p')],
+            [InlineKeyboardButton("C3: Systems Eq", callback_data='p'), InlineKeyboardButton("C4: Indices/Log", callback_data='p')],
+            [InlineKeyboardButton("C5: Progressions", callback_data='p'), InlineKeyboardButton("C6: Linear Law", callback_data='p')],
+            [InlineKeyboardButton("C7: Coordinate", callback_data='p'), InlineKeyboardButton("C8: Vectors", callback_data='p')],
+            [InlineKeyboardButton("C9: Different.", callback_data='p'), InlineKeyboardButton("C10: Prob Dist", callback_data='p')],
+            [InlineKeyboardButton("⬅️ Kembali", callback_data='back')]
         ]
         await query.edit_message_text("Pilih Bab Tingkatan 4:", reply_markup=InlineKeyboardMarkup(keyboard))
 
     elif data == 'menu_f5':
         keyboard = [
-            [InlineKeyboardButton("C1: Circular", callback_query_data='p'), InlineKeyboardButton("C2: Adv Diff", callback_query_data='p')],
-            [InlineKeyboardButton("C3: Integration", callback_query_data='p'), InlineKeyboardButton("C4: Trig Functions", callback_query_data='p')],
-            [InlineKeyboardButton("C5: P&C", callback_query_data='p'), InlineKeyboardButton("C6: Prob Dist", callback_query_data='p')],
-            [InlineKeyboardButton("C7: Kinematics", callback_query_data='p'), InlineKeyboardButton("C8: Math Prog", callback_query_data='p')],
-            [InlineKeyboardButton("⬅️ Kembali", callback_query_data='back')]
+            [InlineKeyboardButton("C1: Circular", callback_data='p'), InlineKeyboardButton("C2: Adv Diff", callback_data='p')],
+            [InlineKeyboardButton("C3: Integration", callback_data='p'), InlineKeyboardButton("C4: Trig Func", callback_data='p')],
+            [InlineKeyboardButton("C5: P&C", callback_data='p'), InlineKeyboardButton("C6: Prob Dist", callback_data='p')],
+            [InlineKeyboardButton("C7: Kinematics", callback_data='p'), InlineKeyboardButton("C8: Math Prog", callback_data='p')],
+            [InlineKeyboardButton("⬅️ Kembali", callback_data='back')]
         ]
         await query.edit_message_text("Pilih Bab Tingkatan 5:", reply_markup=InlineKeyboardMarkup(keyboard))
 
     elif data == 'back':
-        keyboard = [[InlineKeyboardButton("📘 T4", callback_query_data='menu_f4')], [InlineKeyboardButton("📕 T5", callback_query_data='menu_f5')], [InlineKeyboardButton("❓ TAK TAHU", callback_query_data='unknown')]]
+        keyboard = [
+            [InlineKeyboardButton("📘 TINGKATAN 4", callback_data='menu_f4')],
+            [InlineKeyboardButton("📕 TINGKATAN 5", callback_data='menu_f5')],
+            [InlineKeyboardButton("❓ TAK TAHU TOPIK (+RM1)", callback_data='unknown')]
+        ]
         await query.edit_message_text("Sila pilih kategori:", reply_markup=InlineKeyboardMarkup(keyboard))
 
-    else: # Jika tekan mana-mana bab atau unknown
+    else:
         price = 6 if data == 'unknown' else 5
         context.user_data['final_price'] = price
         await query.edit_message_text(text=f"Harga: RM{price}\n\nSila HANTAR GAMBAR soalan anda.")
@@ -62,7 +66,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-    print("ENJIN AKTIF! Sila cuba /start.")
+    print("ENJIN AKTIF! Sila cuba /start di Telegram.")
     app.run_polling()
 
 if __name__ == '__main__':
